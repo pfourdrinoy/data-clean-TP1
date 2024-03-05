@@ -79,3 +79,5 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 # if the module is called, run the main loading function
 if __name__ == '__main__':
     load_clean_data(download_data())
+
+    https://github.com/pfourdrinoy/data-clean-TP1.git
