@@ -38,16 +38,13 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
         'long_coor1': float,
         'freq_mnt': float,
         'dermnt': str,
-        'tel': float
+        'tel': str
     }
     df = pd.read_csv(
         data_fname,
         usecols=column
         )
-    df['adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie']
-    df['com'] = df['com_nom']+ ' ' + df['com_cp'].astype(str) 
-    df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
-    df.drop(columns=['com_cp', 'com_nom'], inplace=True)
+
     return df
 
 
@@ -61,8 +58,9 @@ def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
 # Define a framing function
 def frame_data(df:pd.DataFrame) -> pd.DataFrame:
     """ One function all framing (column renaming, column merge)"""
-    df.rename(...)
-    ...
+    df['Adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie'] + ' ' + df['com_nom']+ ' ' + df['com_cp'].astype(str)  
+    df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
+    df.drop(columns=['com_cp', 'com_nom'], inplace=True)
     return df
 
 
