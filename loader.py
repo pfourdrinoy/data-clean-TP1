@@ -28,10 +28,26 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
     """ One function to read csv into a dataframe with appropriate types/formats.
         Note: read only pertinent columns, ignore the others.
     """
+        column = {
+        'nom': str,
+        'adr_num': float,
+        'adr_voie': str,
+        'com_nom':str,
+        'com_cp': float,
+        'lat_coor1': float,
+        'long_coor1': float,
+        'freq_mnt': float,
+        'dermnt': str,
+        'tel': float
+    }
     df = pd.read_csv(
         data_fname,
-        ...
+        usecols=column
         )
+    df['adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie']
+    df['com'] = df['com_nom']+ ' ' + df['com_cp'].astype(str) 
+    df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
+    df.drop(columns=['com_cp', 'com_nom'], inplace=True)
     return df
 
 
