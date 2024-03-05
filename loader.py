@@ -54,7 +54,9 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
 # once they are all done, call them in the general sanitizing function
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
     """ One function to do all sanitizing"""
-    ...
+    'adr_num' = (re.findall(r'\b\d+\b',adr_voie))
+    'adr_voie' = adr_voie.lower()
+    
     return df
 
 
