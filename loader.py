@@ -80,4 +80,30 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 if __name__ == '__main__':
     load_clean_data(download_data())
 
-    https://github.com/pfourdrinoy/data-clean-TP1.git
+
+def format_com_cp(df:pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    
+    df.loc[:, 'com_cp'] = (
+        df.com_cp
+        .astype(str)  # cast all elements to str type
+        .str.strip(' ') # trim leading and trailing whitespaces
+        # complete with other manipulations if necessary
+    )
+    
+    return df
+
+import pandas as pd
+
+# 指定 CSV 文件路径
+file_path = r'C:\Users\18509\Desktop\data-cleaning1\data-clean-TP1\data\sample_dirty.csv'
+
+# 读取 CSV 文件
+df = pd.read_csv(file_path)
+
+# 输出 com_cp 列的所有数据，如果是0则输出 pd.NA
+for value in df['com_cp']:
+    if value == 0:
+        print(pd.NA)
+    else:
+        print(value)
