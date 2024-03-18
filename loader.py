@@ -47,9 +47,12 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
     return df
 
 
+
 # once they are all done, call them in the general sanitizing function
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
-    df= (clean_adr_num(df)
+    df = clean_adr_num(df) 
+    df = df.replace(r'\n', ' ', regex=True)
+    df = (df
          .pipe(clean_adr_voie)
          .pipe(method_com_cp)
          .pipe(method_com_nom)
@@ -58,17 +61,18 @@ def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
          .pipe(sanitize_dermnt)
          .pipe(clean_freq_mnt)
          .pipe(clean_name)
+         .pipe(format_tel1)
          )
     
-    return df
+    return df 
 
 
 # Define a framing function
 def frame_data(df:pd.DataFrame) -> pd.DataFrame:
     """ One function all framing (column renaming, column merge)"""
     df.rename(columns={'nom': 'Nom', 
-                   'dernmnt':'Date Dernière Maintenance', 
-                   'tel': 'Téléphone', 
+                   'dermnt':'Date Dernière Maintenance', 
+                   'tel1': 'Téléphone', 
                    'freq_mnt':'Fréquence Maintenance', 
                    'lat_coor1': 'Latitude', 
                    'long_coor1':'Longitude'}, inplace=True)
@@ -87,11 +91,6 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
           .pipe(frame_data)
     )
     return df
-
-
-#if the module is called, run the main loading function
-if __name__ == '__main__':
-    load_clean_data()
 
 def clean_name(df):
     for index, valeur in enumerate(df['nom']):
@@ -113,7 +112,7 @@ def sanitize_dermnt(df:pd.DataFrame) :
         if "Tous les ans" in row['dermnt']:
             df.at[index, 'dermnt'] = pd.NaT
         if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
-            df.at[index, 'dermnt'] = pd.to_datetime.date(row['dermnt'])
+            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
     return df
 
 def method_com_cp(df: pd.DataFrame) -> pd.DataFrame:
@@ -168,8 +167,13 @@ def TextClean_adr_voie(text):
     cleaned_text = cleaned_text.rstrip()
     return cleaned_text
 
-df=load_formatted_data('data/sample_dirty.csv')
-sanitize_data(df)
-pd.set_option('display.max_rows', None)  
-pd.set_option('display.max_columns', None) 
-print(df) 
+def format_tel1(df: pd.DataFrame) -> pd.DataFrame:
+    pattern = r"^(?:\+?33|\d{1})?\s*(\d{1})\s*(\d{2})\s*(\d{2})\s*(\d{2})\s*(\d{2})$"
+    df['tel1'] = df['tel1'].apply(lambda x: re.sub(pattern, r"+33 \1 \2 \3 \4 \5", x) if x.strip() else pd.NA)
+    return df
+
+#if the module is called, run the main loading function
+if __name__ == '__main__':
+    pd.set_option('display.max_rows', None)  
+    pd.set_option('display.max_columns', None) 
+    print(load_clean_data()['Téléphone'])
