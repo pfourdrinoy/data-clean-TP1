@@ -435,6 +435,7 @@ def test_load_formatted_data(sample_dirty_fname, sample_formatted):
 
 def test_sanitize_data(sample_formatted, sample_sanitized):
     from loader import sanitize_data
+    print(sanitize_data(sample_formatted))
     assert sanitize_data(sample_formatted).equals(sample_sanitized)
 
 
@@ -445,8 +446,8 @@ def test_frame_data(sample_sanitized, sample_framed):
 
 def test_load_clean_data(sample_dirty_fname, sample_framed):
     from loader import load_clean_data
+    print(load_clean_data(sample_dirty_fname))
     assert load_clean_data(sample_dirty_fname).equals(sample_framed)
-
 
 def assert_column_equal(clean, target, column):
     # utility function if you which to implement column-specific assertion tests
