@@ -48,8 +48,8 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
     df['com'] = df['com_nom']+ ' ' + df['com_cp'].astype(str) 
     df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
     df.drop(columns=['com_cp', 'com_nom'], inplace=True)
+    df['dermnt'] = 
     return df
-
 
 # once they are all done, call them in the general sanitizing function
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
@@ -81,3 +81,10 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 # if the module is called, run the main loading function
 if __name__ == '__main__':
     load_clean_data(download_data())
+
+def sanitize_dermnt(df:pd.DataFrame) :
+    for index, row in df.itterows():
+        if "Tous les ans" in row['dermnt']
+            df.at[index, 'freq_mnt'] = pd.NaT
+    return df
+
