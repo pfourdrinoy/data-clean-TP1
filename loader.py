@@ -113,7 +113,7 @@ def sanitize_dermnt(df:pd.DataFrame) :
         if "Tous les ans" in row['dermnt']:
             df.at[index, 'dermnt'] = pd.NaT
         if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
-            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
+            df.at[index, 'dermnt'] = pd.to_datetime.date(row['dermnt'])
     return df
 
 def method_com_cp(df: pd.DataFrame) -> pd.DataFrame:
@@ -168,8 +168,8 @@ def TextClean_adr_voie(text):
     cleaned_text = cleaned_text.rstrip()
     return cleaned_text
 
-# df=load_formatted_data('data/sample_dirty.csv')
-# sanitize_data(df)
-# pd.set_option('display.max_rows', None)  
-# pd.set_option('display.max_columns', None) 
-# print(df) 
+df=load_formatted_data('data/sample_dirty.csv')
+sanitize_data(df)
+pd.set_option('display.max_rows', None)  
+pd.set_option('display.max_columns', None) 
+print(df) 
