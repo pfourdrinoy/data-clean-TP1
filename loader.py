@@ -97,6 +97,7 @@ def clean_freq_mnt(df):
             df.loc[index, 'freq_mnt'] = pd.NA
         if (re.search(r'\d', valeur)):
             df.loc[index, 'freq_mnt'] = pd.NA
+        df['freq_mnt'] = df['freq_mnt'].str.lower()
     return df
 
 def sanitize_dermnt(df:pd.DataFrame) :
@@ -110,13 +111,11 @@ def sanitize_dermnt(df:pd.DataFrame) :
 def method_com_cp(df: pd.DataFrame) -> pd.DataFrame:
     # Convert com_cp column to string type
     df['com_cp'] = df['com_cp'].astype(str).apply(lambda x: pd.NA if x == '0' else x)
-    
     return df
 
 def method_com_nom(df: pd.DataFrame) -> pd.DataFrame:
     # Fill missing values with pd.NA
     df['com_nom'] = df['com_nom'].apply(lambda x: pd.NA if pd.isna(x) or x.strip() == '' else x).str.title()
-    
     return df
 
 def method_lat_coor1(df: pd.DataFrame) -> pd.DataFrame:
