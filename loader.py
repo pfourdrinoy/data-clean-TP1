@@ -58,7 +58,8 @@ def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
 # Define a framing function
 def frame_data(df:pd.DataFrame) -> pd.DataFrame:
     """ One function all framing (column renaming, column merge)"""
-    df['Adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie'] + ' ' + df['com_nom']+ ' ' + df['com_cp'].astype(str)  
+    df.rename('nom': 'Nom', 'dernmnt':'Date Dernière Maintenance', 'tel': 'Téléphone', 'freq_mnt':'Fréquence Maintenance', 'lat_coor1': 'Latitude', 'long_coor1':'Longitude')
+    df['Adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie'] + ' ' + df['com_cp'].astype(str)  + ' ' + df['com_nom']
     df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
     df.drop(columns=['com_cp', 'com_nom'], inplace=True)
     return df
