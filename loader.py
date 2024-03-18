@@ -52,6 +52,7 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
     df = clean_adr_num(df) 
     df = df.replace(r'\n', ' ', regex=True)
+    df = df.replace(r'\r', ' ', regex=True)
     df = (df
          .pipe(clean_adr_voie)
          .pipe(method_com_cp)
@@ -63,7 +64,6 @@ def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
          .pipe(clean_name)
          .pipe(format_tel1)
          )
-    
     return df 
 
 
@@ -76,10 +76,12 @@ def frame_data(df:pd.DataFrame) -> pd.DataFrame:
                    'freq_mnt':'Fréquence Maintenance', 
                    'lat_coor1': 'Latitude', 
                    'long_coor1':'Longitude'}, inplace=True)
-
+    df['com_cp'] = df['com_cp'].replace(pd.NA, '')
     df['Adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie'] + ' ' + df['com_cp'].astype(str)  + ' ' + df['com_nom']
     df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
     df.drop(columns=['com_cp', 'com_nom'], inplace=True)
+    df = df.replace(pd.NA, '')
+    df = df.replace(r'\s+', ' ', regex=True)
     return df
 
 
@@ -112,7 +114,7 @@ def sanitize_dermnt(df:pd.DataFrame) :
         if "Tous les ans" in row['dermnt']:
             df.at[index, 'dermnt'] = pd.NaT
         if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
-            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
+            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt']).date()
     return df
 
 def method_com_cp(df: pd.DataFrame) -> pd.DataFrame:
@@ -169,11 +171,16 @@ def TextClean_adr_voie(text):
 
 def format_tel1(df: pd.DataFrame) -> pd.DataFrame:
     pattern = r"^(?:\+?33|\d{1})?\s*(\d{1})\s*(\d{2})\s*(\d{2})\s*(\d{2})\s*(\d{2})$"
+    df['tel1'] = df['tel1'].apply(amé_tel)
     df['tel1'] = df['tel1'].apply(lambda x: re.sub(pattern, r"+33 \1 \2 \3 \4 \5", x) if x.strip() else pd.NA)
+    df['tel1'] = df['tel1'].replace('-','')
     return df
 
+def amé_tel(tel:str):
+    tel = re.sub(r'\s+', '', tel)
+    return tel
 #if the module is called, run the main loading function
 if __name__ == '__main__':
     pd.set_option('display.max_rows', None)  
     pd.set_option('display.max_columns', None) 
-    print(load_clean_data()['Téléphone'])
+    print(load_clean_data()['Fréquence Maintenance'])
