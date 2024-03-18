@@ -161,3 +161,18 @@ result = apply_all_methods(df)
 pd.set_option('display.max_rows', None)  
 pd.set_option('display.max_columns', None)  
 print(result)
+
+def clean_adr_num(df):
+    df['adr_num']=df['adr_num'].replace(0, pd.NA)
+    df['adr_num']=df['adr_num'].replace('-', pd.NA)
+    df['adr_num']=df['adr_num'].astype(str).apply(TextClean_adr_num)
+    return df
+
+def TextClean_adr_num(text):
+    """Garder seulement le numéro de voierie"""
+    if re.search(r'\bbis\b|\bter\b', text):
+        cleaned_text = re.sub(r'[^0-9- ]', '', text)
+        cleaned_text = cleaned_text + " bis"
+    else:
+        cleaned_text = re.sub(r'[^0-9-]', '', text)
+    return cleaned_text
