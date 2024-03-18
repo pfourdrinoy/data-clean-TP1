@@ -50,6 +50,8 @@ def method_long_coor1(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+
+
 def apply_all_methods(df: pd.DataFrame) -> pd.DataFrame:
     df = (df
           .pipe(method_com_cp)
