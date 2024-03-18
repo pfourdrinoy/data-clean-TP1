@@ -2,7 +2,7 @@ import os
 import requests
 import numpy as np
 import pandas as pd
-
+import re
 DATA_PATH = 'data/MMM_MMM_DAE.csv'
 
 def download_data(url, force_download=False, ):
@@ -28,7 +28,7 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
     """ One function to read csv into a dataframe with appropriate types/formats.
         Note: read only pertinent columns, ignore the others.
     """
-        column = {
+    column = {
         'nom': str,
         'adr_num': float,
         'adr_voie': str,
@@ -53,9 +53,7 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
 
 # once they are all done, call them in the general sanitizing function
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
-    """ One function to do all sanitizing"""
-    'adr_num' = (re.findall(r'\b\d+\b',adr_voie))
-    'adr_voie' = adr_voie.lower()
+    
     
     return df
 
@@ -81,3 +79,18 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 # if the module is called, run the main loading function
 if __name__ == '__main__':
     load_clean_data(download_data())
+
+def clean_name(df):
+    for index, valeur in enumerate(df['Name']):
+        if (valeur==''):
+            df.loc[index, 'Name'] = pd.NA
+    return df
+
+def clean_freq_mnt(df):
+    for index, valeur in enumerate(df['freq_mnt']):
+        if valeur == '':
+            df.loc[index, 'freq_mnt'] = pd.NA
+        if (re.search(r'\d', valeur)):
+            df.loc[index, 'freq_mnt'] = pd.NA
+    return df
+
