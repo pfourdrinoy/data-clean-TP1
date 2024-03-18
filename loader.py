@@ -83,15 +83,15 @@ if __name__ == '__main__':
 def clean_name(df):
     for index, valeur in enumerate(df['Name']):
         if (valeur==''):
-            df.loc[index, 'Name'] = 'NA'
+            df.loc[index, 'Name'] = pd.NA
     return df
 
 def clean_freq_mnt(df):
     for index, valeur in enumerate(df['freq_mnt']):
         if valeur == '':
-            df.loc[index, 'freq_mnt'] = 'NA'
+            df.loc[index, 'freq_mnt'] = pd.NA
         if (re.search(r'\d', valeur)):
-            df.loc[index, 'freq_mnt'] = 'NA'
+            df.loc[index, 'freq_mnt'] = pd.NA
     return df
 
 
