@@ -89,9 +89,9 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
     return df
 
 
-# if the module is called, run the main loading function
-# if __name__ == '__main__':
-#     load_clean_data(download_data())
+#if the module is called, run the main loading function
+if __name__ == '__main__':
+    load_clean_data()
 
 def clean_name(df):
     for index, valeur in enumerate(df['nom']):
@@ -168,8 +168,8 @@ def TextClean_adr_voie(text):
     cleaned_text = cleaned_text.rstrip()
     return cleaned_text
 
-df=load_formatted_data('data/sample_dirty.csv')
-sanitize_data(df)
-pd.set_option('display.max_rows', None)  
-pd.set_option('display.max_columns', None) 
-print(df) 
+# df=load_formatted_data('data/sample_dirty.csv')
+# sanitize_data(df)
+# pd.set_option('display.max_rows', None)  
+# pd.set_option('display.max_columns', None) 
+# print(df) 
