@@ -32,28 +32,28 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
         'nom': str,
         'adr_num': float,
         'adr_voie': str,
-        'com_nom':str,
         'com_cp': float,
-        'lat_coor1': float,
-        'long_coor1': float,
+        'com_nom':str,
+        'tel1': float,
         'freq_mnt': float,
         'dermnt': str,
-        'tel': float
+        'lat_coor1': float,
+        'long_coor1': float
     }
     df = pd.read_csv(
         data_fname,
         usecols=column
         )
-    df['adresse'] = df['adr_num'].astype(str) + ' ' + df['adr_voie']
-    df['com'] = df['com_nom']+ ' ' + df['com_cp'].astype(str) 
-    df.drop(columns=['adr_num', 'adr_voie'], inplace=True)
-    df.drop(columns=['com_cp', 'com_nom'], inplace=True)
     return df
 
 
 # once they are all done, call them in the general sanitizing function
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
-    
+    df= (clean_adr_num(df)
+         .pipe(clean_adr_voie)
+         
+         
+         )
     
     return df
 
@@ -77,8 +77,8 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 
 
 # if the module is called, run the main loading function
-if __name__ == '__main__':
-    load_clean_data(download_data())
+# if __name__ == '__main__':
+#     load_clean_data(download_data())
 
 def clean_name(df):
     for index, valeur in enumerate(df['Name']):
@@ -152,15 +152,15 @@ def apply_all_methods(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-data_file = 'data/sample_dirty.csv'
-df = pd.read_csv(data_file)
+# data_file = 'data/sample_dirty.csv'
+# df = pd.read_csv(data_file)
 
 
-result = apply_all_methods(df)
+# result = apply_all_methods(df)
 
-pd.set_option('display.max_rows', None)  
-pd.set_option('display.max_columns', None)  
-print(result)
+# pd.set_option('display.max_rows', None)  
+# pd.set_option('display.max_columns', None)  
+# print(result)
 
 def clean_adr_num(df):
     df['adr_num']=df['adr_num'].replace(0, pd.NA)
@@ -195,3 +195,7 @@ def TextClean_adr_voie(text):
     cleaned_text = re.sub(r'\bMontpellier\b|\bMONTPELLIER\b|[0-9,]', '', text)
     cleaned_text = cleaned_text.rstrip()
     return cleaned_text
+
+df=load_formatted_data('data/sample_dirty.csv')
+sanitize_data(df)
+print(df)
