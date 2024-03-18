@@ -176,3 +176,22 @@ def TextClean_adr_num(text):
     else:
         cleaned_text = re.sub(r'[^0-9-]', '', text)
     return cleaned_text
+
+def sanitize_dermnt(df:pd.DataFrame) :
+    for index, row in df.itterows():
+        if "Tous les ans" in row['dermnt']:
+            df.at[index, 'dermnt'] = pd.NaT
+        if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
+            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
+    return df
+
+def clean_adr_voie(df):
+    df['adr_voie']=df['adr_voie'].replace('-', pd.NA)
+    df['adr_voie']=df['adr_voie'].astype(str).apply(TextClean_adr_voie)
+    return df
+
+def TextClean_adr_voie(text):  
+    """Garder seulement l'adresse"""
+    cleaned_text = re.sub(r'\bMontpellier\b|\bMONTPELLIER\b|[0-9,]', '', text)
+    cleaned_text = cleaned_text.rstrip()
+    return cleaned_text
