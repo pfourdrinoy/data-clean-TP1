@@ -2,7 +2,7 @@ import os
 import requests
 import numpy as np
 import pandas as pd
-
+import re
 DATA_PATH = 'data/MMM_MMM_DAE.csv'
 
 def download_data(url, force_download=False, ):
@@ -81,12 +81,18 @@ if __name__ == '__main__':
     load_clean_data(download_data())
 
 def clean_name(df):
-    name =[]
-    for valeur in df['Name']:
+    for index, valeur in enumerate(df['Name']):
         if (valeur==''):
-            name.append('NA')
-        else:
-         name.append(valeur)
-    return name
+            df.loc[index, 'Name'] = 'NA'
+    return df
+
+def clean_freq_mnt(df):
+    for index, valeur in enumerate(df['freq_mnt']):
+        if valeur == '':
+            df.loc[index, 'freq_mnt'] = 'NA'
+        if (re.search(r'\d', valeur)):
+            df.loc[index, 'freq_mnt'] = 'NA'
+    return df
+
 
 
