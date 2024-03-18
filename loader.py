@@ -87,13 +87,14 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 #     load_clean_data(download_data())
 
 def clean_adr_voie(df):
+    df['adr_voie']=df['adr_voie'].replace('-', pd.NA)
     df['adr_voie']=df['adr_voie'].astype(str).apply(TextClean_adr_voie)
     return df
 
 def TextClean_adr_voie(text):  
     """Garder seulement l'adresse"""
-    cleaned_text = re.sub(r'[0-9]', '', text)
-    cleaned_text = re.sub(r'\bMontpellier\b, ', cleaned_text)
+    cleaned_text = re.sub(r'\bMontpellier\b|\bMONTPELLIER\b|[0-9,]', '', text)
+    cleaned_text = cleaned_text.rstrip()
     return cleaned_text
 
 def clean_adr_num(df):
