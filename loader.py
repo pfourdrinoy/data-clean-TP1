@@ -51,8 +51,13 @@ def load_formatted_data(data_fname:str) -> pd.DataFrame:
 def sanitize_data(df:pd.DataFrame) -> pd.DataFrame:
     df= (clean_adr_num(df)
          .pipe(clean_adr_voie)
-         
-         
+         .pipe(method_com_cp)
+         .pipe(method_com_nom)
+         .pipe(method_lat_coor1)
+         .pipe(method_long_coor1)
+         .pipe(sanitize_dermnt)
+         .pipe(clean_freq_mnt)
+         .pipe(clean_name)
          )
     
     return df
@@ -81,9 +86,9 @@ def load_clean_data(data_path:str=DATA_PATH)-> pd.DataFrame:
 #     load_clean_data(download_data())
 
 def clean_name(df):
-    for index, valeur in enumerate(df['Name']):
+    for index, valeur in enumerate(df['nom']):
         if (valeur==''):
-            df.loc[index, 'Name'] = pd.NA
+            df.loc[index, 'nom'] = pd.NA
     return df
 
 def clean_freq_mnt(df):
@@ -94,73 +99,41 @@ def clean_freq_mnt(df):
             df.loc[index, 'freq_mnt'] = pd.NA
     return df
 
+def sanitize_dermnt(df:pd.DataFrame) :
+    for index, row in df.iterrows():
+        if "Tous les ans" in row['dermnt']:
+            df.at[index, 'dermnt'] = pd.NaT
+        if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
+            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
+    return df
 
-#ni
 def method_com_cp(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    
     # Convert com_cp column to string type
     df['com_cp'] = df['com_cp'].astype(str).apply(lambda x: pd.NA if x == '0' else x)
     
     return df
 
-
-
 def method_com_nom(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    
     # Fill missing values with pd.NA
     df['com_nom'] = df['com_nom'].apply(lambda x: pd.NA if pd.isna(x) or x.strip() == '' else x).str.title()
     
     return df
 
-
-
 def method_lat_coor1(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    
     # Extract the coordinates from the lat_coor1 column
     df['lat_coor1'] = (
         df['lat_coor1']
         .str.extract(r"(3\.\d+)", expand=False)  # Extract the coordinates
     )
-    
     return df
 
-
 def method_long_coor1(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    
     # Extract the coordinates from the long_coor1 column
     df['long_coor1'] = (
         df['long_coor1']
         .str.extract(r"(\d{2}\.\d+)", expand=False)  # Extract the coordinates
     )
-    
     return df
-
-
-
-
-def apply_all_methods(df: pd.DataFrame) -> pd.DataFrame:
-    df = (df
-          .pipe(method_com_cp)
-          .pipe(method_com_nom)
-          .pipe(method_lat_coor1)
-          .pipe(method_long_coor1)
-         )
-    return df
-
-
-# data_file = 'data/sample_dirty.csv'
-# df = pd.read_csv(data_file)
-
-
-# result = apply_all_methods(df)
-
-# pd.set_option('display.max_rows', None)  
-# pd.set_option('display.max_columns', None)  
-# print(result)
 
 def clean_adr_num(df):
     df['adr_num']=df['adr_num'].replace(0, pd.NA)
@@ -177,14 +150,6 @@ def TextClean_adr_num(text):
         cleaned_text = re.sub(r'[^0-9-]', '', text)
     return cleaned_text
 
-def sanitize_dermnt(df:pd.DataFrame) :
-    for index, row in df.itterows():
-        if "Tous les ans" in row['dermnt']:
-            df.at[index, 'dermnt'] = pd.NaT
-        if (re.match(r'^\d{4}-\d{2}-\d{2}$', row['dermnt'])):
-            df.at[index, 'dermnt'] = pd.to_datetime(row['dermnt'])
-    return df
-
 def clean_adr_voie(df):
     df['adr_voie']=df['adr_voie'].replace('-', pd.NA)
     df['adr_voie']=df['adr_voie'].astype(str).apply(TextClean_adr_voie)
@@ -198,4 +163,6 @@ def TextClean_adr_voie(text):
 
 df=load_formatted_data('data/sample_dirty.csv')
 sanitize_data(df)
-print(df)
+pd.set_option('display.max_rows', None)  
+pd.set_option('display.max_columns', None) 
+print(df) 
